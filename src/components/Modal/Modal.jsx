@@ -5,7 +5,7 @@ export default class Modal extends Component {
     return (
       <div class="overlay">
         <div class="modal">
-          <img src={[`${this.props.largeImageURL}`]} alt="" />
+          <img src="" alt="" />
         </div>
       </div>
     );
