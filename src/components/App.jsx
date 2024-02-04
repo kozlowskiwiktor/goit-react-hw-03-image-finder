@@ -1,84 +1,79 @@
 import { Component } from 'react';
-import api from '../services/api';
-import { Searchbar } from './Searchbar/Searchbar';
+import { fetchMovies } from 'services/api';
+import Searchbar from './Searchbar/Searchbar';
 import ImageGallery from './ImageGallery/ImageGallery';
+import Button from './Button/Button';
+import Modal from './Modal/Modal';
+import Loader from './Loader/Loader';
 
 export class App extends Component {
   state = {
     image: [],
-    searchImage: null,
+    searchQuery: null,
     page: null,
     loading: false,
-    gallery: [],
     error: null,
     showModal: false,
     largeImage: '',
   };
 
-  // handleSubmit = evt => {
-  //   evt.preventDefault();
-  //   this.getGallery(this.state.query);
-  // };
+  componentDidUpdate(_, prevState) {
+    if (
+      prevState.searchQuery !== this.state.searchQuery ||
+      prevState.page !== this.state.page
+    ) {
+      this.setState({ loading: true });
+      fetchMovies(this.state.searchQuery, this.state.page)
+        .then(data => {
+          this.setState(prevState => ({
+            image: [...prevState.image, ...data.hits],
+          }));
 
-  getGallery = async query => {
-    this.setState({ loading: true });
-    try {
-      const gallery = await api.fetchGalleryWithQuery(query, 1);
-      this.setState({ gallery });
-    } catch (err) {
-      this.setState({ error: err });
-    } finally {
-      this.setState({ loading: false });
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+          });
+        })
+        .catch(error => this.setState({ error }))
+        .finally(() => this.setState({ loading: false }));
     }
-  };
-  // axios
-  //   .get(
-  //     '?q=cat&page=1&key=34960396-ee79eba7e6dca12e9fa7bf6c6&image_type=photo&orientation=horizontal&per_page=12'
-  //   )
-  //   .then(response => {
-  //     this.setState({
-  //       isLoading: false,
-  //       gallery: response.data.hits,
-  //     });
-  //   })
-  //   .catch(err => {
-  //     this.setState({
-  //       isLoading: false,
-  //       error: err.message,
-  //     });
-  //   });
+  }
 
-  // submitHandlerSearch = value => {
-  //   this.setState({ query: value, page: 1 });
-  // };
+  onClickLoadMore = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
+  };
+
+  modalShow = index => {
+    this.setState({
+      showModal: true,
+      largeImage: this.state.image[index].largeImage,
+    });
+  };
+
+  modalHide = () => {
+    this.setState({ showModal: false });
+  };
+
+  onFormSubmit = img => {
+    this.setState({ searchQuery: img, page: 1, image: [] });
+  };
+
   render() {
-    const { gallery, loading, error } = this.state;
+    const { image, loading, error, showModal, largeImage } = this.state;
+
     return (
-      <>
-        {/* <div>
-          <form onSubmit={this.handleSubmit}>
-            <input
-              type="text"
-              name="query"
-              value={query}
-              onChange={this.handleChange}
-            />
-            <button type="submit">Szukaj</button>
-          </form>
-        </div> */}
-        <Searchbar />
-        <div>
-          {loading ? (
-            <p>Ładowanie galerii...</p>
-          ) : error !== null ? (
-            <p>Wystąpił błąd</p>
-          ) : gallery.length > 0 ? (
-            <ImageGallery gallery={gallery} />
-          ) : (
-            <p>Brak obrazów</p>
-          )}
-        </div>
-      </>
+      <div>
+        <Searchbar onSubmit={this.onFormSubmit} />
+        <ImageGallery searchQuery={image} onClick={this.modalShow} />
+
+        {image.length !== 0 && (
+          <Button text="Load more" onClick={this.onClickLoadMore} />
+        )}
+
+        {error ? this.notify() : null}
+        {loading && <Loader />}
+        {showModal && <Modal onClose={this.modalHide} img={largeImage} />}
+      </div>
     );
   }
 }
