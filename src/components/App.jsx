@@ -8,26 +8,27 @@ import Loader from './Loader/Loader';
 
 export class App extends Component {
   state = {
-    image: [],
-    searchQuery: null,
+    images: [],
+    items: null,
     page: null,
     loading: false,
     error: null,
     showModal: false,
-    largeImage: '',
+    largeImageURL: '',
   };
 
   componentDidUpdate(_, prevState) {
     if (
-      prevState.searchQuery !== this.state.searchQuery ||
+      prevState.items !== this.state.items ||
       prevState.page !== this.state.page
     ) {
       this.setState({ loading: true });
-      fetchMovies(this.state.searchQuery, this.state.page)
+      fetchMovies(this.state.items, this.state.page)
         .then(data => {
           this.setState(prevState => ({
-            image: [...prevState.image, ...data.hits],
+            images: [...prevState.images, ...data.hits],
           }));
+          console.log(data.hits);
 
           window.scrollTo({
             top: document.documentElement.scrollHeight,
@@ -46,8 +47,9 @@ export class App extends Component {
   modalShow = index => {
     this.setState({
       showModal: true,
-      largeImage: this.state.image[index].largeImage,
+      largeImage: this.state.images[index].largeImageURL,
     });
+    console.log(this.state.images[index].largeImageURL);
   };
 
   modalHide = () => {
@@ -55,18 +57,18 @@ export class App extends Component {
   };
 
   onFormSubmit = img => {
-    this.setState({ searchQuery: img, page: 1, image: [] });
+    this.setState({ items: img, page: 1, images: [] });
   };
 
   render() {
-    const { image, loading, error, showModal, largeImage } = this.state;
+    const { images, loading, error, showModal, largeImage } = this.state;
 
     return (
       <div>
         <Searchbar onSubmit={this.onFormSubmit} />
-        <ImageGallery searchQuery={image} onClick={this.modalShow} />
+        <ImageGallery items={images} onClick={this.showModal} />
 
-        {image.length !== 0 && (
+        {images.length !== 0 && (
           <Button text="Load more" onClick={this.onClickLoadMore} />
         )}
 
