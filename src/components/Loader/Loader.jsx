@@ -7,9 +7,9 @@ const Loader = () => {
         visible={true}
         height="80"
         width="80"
-        ariaLabel="rotating-triangels-loading"
+        ariaLabel="rotating-triangles-loading"
         wrapperStyle={{}}
-        wrapperClass="rotating-triangels-wrapper"
+        wrapperClass="rotating-triangles-wrapper"
       />
     </div>
   );
