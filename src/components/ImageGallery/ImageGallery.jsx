@@ -14,7 +14,7 @@ export default class ImageGallery extends Component {
             key={id}
             tags={tags}
             smallImageUrl={webformatURL}
-            modalImageIrl={() => modalImageUrl(largeImageURL, tags)}
+            modalImageUrl={() => modalImageUrl(largeImageURL, tags)}
           />
         ))}
       </ul>
