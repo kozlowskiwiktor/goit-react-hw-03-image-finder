@@ -1,15 +1,28 @@
 import ImageGalleryItem from 'components/ImageGalleryItem/ImageGalleryItem';
 import css from './ImageGallery.module.css';
+import { PropTypes } from 'react';
+import { Component } from 'react';
 
-const ImageGallery = ({ items, handleClose }) => {
-  return (
-    <ul className={css.imageGallery}>
-      {items &&
-        items.map((img) => (
-          <ImageGalleryItem key={img.id} img={img} onClick={()} />
+export default class ImageGallery extends Component {
+  render() {
+    const { images, modalImageUrl } = this.props;
+
+    return (
+      <ul className={css.imageGallery}>
+        {images.map(({ id, tags, webformatURL, largeImageURL }) => (
+          <ImageGalleryItem
+            key={id}
+            tags={tags}
+            smallImageUrl={webformatURL}
+            modalImageIrl={() => modalImageUrl(largeImageURL, tags)}
+          />
         ))}
-    </ul>
-  );
-};
+      </ul>
+    );
+  }
+}
 
-export default ImageGallery;
+ImageGallery.propTypes = {
+  images: PropTypes.array,
+  modalImageUrl: PropTypes.func,
+};

@@ -1,15 +1,14 @@
-const API_KEY = '34960396-ee79eba7e6dca12e9fa7bf6c6';
-const baseURL = 'https://pixabay.com/api/';
+import axios from 'axios';
 
-export const fetchMovies = (searchQuery, currentPage) => {
-    return fetch(
-        `${baseURL}?q=${searchQuery}&page=${currentPage}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
-    ).then(response => {
-        if (response.ok) {
-            return response.json();
-        }
-        return Promise.reject(
-            new Error(`Word ${this.state.searchQuery} is not exist`)
-        )
-    })
-}
+axios.defaults.baseURL = 'https://pixabay.com/api/';
+
+const API_KEY = '34960396-ee79eba7e6dca12e9fa7bf6c6';
+
+const fetchImages = async (query, page) => {
+  const response = await axios.get(
+    `?q=${query}&page=${page}&key=${API_KEY}&image_type=photo&orientation=horizontal&per_page=12`
+  );
+  return response.data;
+};
+
+export default fetchImages;

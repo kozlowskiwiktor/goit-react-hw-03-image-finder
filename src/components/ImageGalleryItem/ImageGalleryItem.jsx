@@ -1,20 +1,29 @@
 import css from './ImageGalleryItem.module.css';
+import { PropTypes } from 'react';
 
-function ImageGalleryItem({ onClick, img }) {
-  const { webformatURL, tags, id } = img;
+const ImageGalleryItem = ({ smallImageUrl, tags, modalImageUrl }) => {
+  const handleClick = () => {
+    modalImageUrl(smallImageUrl, tags);
+  };
+
   return (
     <>
       <li className={css.imageGalleryItem}>
         <img
-          src={webformatURL}
-          alt={tags}
-          id={id}
           className={css.imageGalleryItemImage}
-          onClick={onClick}
+          src={smallImageUrl}
+          alt={tags}
+          onClick={handleClick}
         />
       </li>
     </>
   );
-}
+};
+
+ImageGalleryItem.propTypes = {
+  smallImageUrl: PropTypes.string,
+  tags: PropTypes.string,
+  modalImageUrl: PropTypes.func,
+};
 
 export default ImageGalleryItem;

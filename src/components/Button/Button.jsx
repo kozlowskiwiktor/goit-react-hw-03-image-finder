@@ -9,9 +9,10 @@ const Button = ({ onClick }) => {
   );
 };
 
-Button.defaultProps = {
-  onClick: () => null,
-};
+// Button.defaultProps = {
+//   onClick: () => null,
+// };
+
 Button.propType = {
   onClick: PropTypes.func.isRequired,
 };
